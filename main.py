@@ -30,7 +30,7 @@ def genRandomSentece():
 		s += alphabet[randint(0,len(alphabet))] 
 
 	s = list(s); s[randint(0,len(s))] = " "+j["pokemon"][randint(0,len(j["pokemon"]))]["name"]+" "
-	s = "".join(s); print(s)
+	s = "".join(s); return s
 
 	f = open("code.json","r"); j = json.load(f); j["code"].append(s)
 	f = open("code.json","w"); json.dump(j,f,indent = len(j["code"]))
@@ -110,7 +110,9 @@ def home():
 			<link rel="preconnect" href="https://fonts.googleapis.com"> 
 			<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin> 
 			<link href="https://fonts.googleapis.com/css2?family=M+PLUS+1+Code&display=swap" rel="stylesheet">
-					
+			<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+			<link href="https://fonts.googleapis.com/css2?family=Alfa+Slab+One&family=Nabla&display=swap" rel="stylesheet">				
+			
 			<meta charset="utf-8">
 			<meta name="viewport" content="width=device-width, initial-scale=1">
 			<title>pokedex</title>
@@ -118,17 +120,16 @@ def home():
 		<style type="text/css">
 			button {height:10%;width:40%;border-radius:10px 10px;}
 			a {font-size:40px;font-family:'M PLUS 1 Code',sans-serif;text-decoration:none;color:white;}
+
+			.navbar {position:absolute;top:0px;left:0px;right:0px;height:10%;width:100%;background:black} 
+				h1 {position:absolute;left:42.5%;font-family: 'Nabla', cursive;}
 		</style>
 		<body>
+			<div class="navbar"> <h1> POKEDEX </h1> </div> 
 			<button style="position:absolute;top:20%;left:30%;background:#1a0853;"><a href="http://127.0.0.1:5001/genWallet"> genWallet </a></button>
 			<button style="position:absolute;top:30%;left:30%;background:#385c6a;"><a href="http://127.0.0.1:5001/requestCode"> requestCode </a></button>
-
 		</body>
 		</html>
-
-
-
-
 
 	"""
 @app.route("/genWallet")
@@ -136,9 +137,23 @@ def index():
 
 	return """
 	<html>
+		<link rel="preconnect" href="https://fonts.googleapis.com"> 
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin> 
+		<link href="https://fonts.googleapis.com/css2?family=M+PLUS+1+Code&display=swap" rel="stylesheet">
+		
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+		<link href="https://fonts.googleapis.com/css2?family=Alfa+Slab+One&family=Nabla&display=swap" rel="stylesheet">
+		
 		<style> 
 			input {position:absolute;left:35%;width:30%;height:5%;font-size:20px}
+			.navbar {position:absolute;top:0px;left:0px;right:0px;height:10%;width:100%;background:black} 
+				p {position:absolute;top:8%;left:20px;}	
+					a {font-family:'M PLUS 1 Code';font-size:25px;color:white;text-decoration:none}
+				h1 {position:absolute;left:42.5%;font-family: 'Nabla', cursive;}
 		</style>
+		<div class="navbar"> 
+			<p><a href="/"> home </a></p> <h1> POKEDEX </h1>
+		</div> 
 		<form action="http://127.0.0.1:5001/genWallet" method="post">
 
 			<input style="top:20%" type="text" name="owner"><br>
@@ -157,6 +172,64 @@ def singup():
 	if request.method == "POST": 
 		result = request.form
 		genWallet(result["owner"],result["nickname"],result["password"])
+
+		f = open("wallet.json", "r"); c = json.load(f); 
+		k = list(c["contracts"].keys()); p = c["contracts"][k[-1]]
+		return """
+		<html> 
+			<link rel="preconnect" href="https://fonts.googleapis.com"> 
+			<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin> 
+			<link href="https://fonts.googleapis.com/css2?family=M+PLUS+1+Code&display=swap" rel="stylesheet">
+			<style>
+
+				.response-msg { position:relative;top:20%;font-family: 'M PLUS 1 Code', sans-serif; font-size:20px;}
+
+			</style>
+			<body>
+				<p class="response-msg" align="center"> the id for """+p["nickname"]+"""' is """+p["id"]+"""</p>
+			</body>
+		</html>
+		"""
+
+@app.route("/requestCode")
+def index_1(): 
+
+	return """
+	<html>
+		<link rel="preconnect" href="https://fonts.googleapis.com"> 
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin> 
+		<link href="https://fonts.googleapis.com/css2?family=M+PLUS+1+Code&display=swap" rel="stylesheet">
+		
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+		<link href="https://fonts.googleapis.com/css2?family=Alfa+Slab+One&family=Nabla&display=swap" rel="stylesheet">
+		
+		<style> 
+			input {position:absolute;left:35%;width:30%;height:5%;font-size:20px}
+			.navbar {position:absolute;top:0px;left:0px;right:0px;height:10%;width:100%;background:black} 
+				p {position:absolute;top:8%;left:20px;}	
+					a {font-family:'M PLUS 1 Code';font-size:25px;color:white;text-decoration:none}
+				h1 {position:absolute;left:42.5%;font-family: 'Nabla', cursive;}
+		</style>
+		<div class="navbar"> 
+			<p><a href="/"> home </a></p> <h1> POKEDEX </h1>
+		</div> 
+		<form action="http://127.0.0.1:5001/requestCode" method="post">
+
+			<input style="top:30%" type="text" name="id"><br>
+			<input style="top:40%" type="text" name="password"><br>
+			
+			<input style="top:50%" type="submit" value="singup">
+
+		</form>
+	</html>
+	"""
+
+@app.route("/requestCode",methods=["POST"])
+def requestcode():
+
+	if request.method == "POST": 
+		result = request.form
+		RequestCode(result["idp"],result["password"])
 
 		f = open("wallet.json", "r"); c = json.load(f); 
 		k = list(c["contracts"].keys()); p = c["contracts"][k[-1]]
